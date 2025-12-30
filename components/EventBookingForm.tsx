@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContex';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { set, z } from 'zod';
 import { format } from 'date-fns';
 import { CalendarIcon, User, Phone, Mail, MapPin, UtensilsCrossed, Music, Palette, Camera, Sparkles, Car, FileText, Shirt, Plane, Moon, House, Luggage } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,9 +13,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import mosaicBg4 from '@/assets/mosaic-bg-4.jpeg';
 import { GiAmpleDress } from "react-icons/gi";
+import { is, se } from 'date-fns/locale';
 
 const eventFormSchema = z.object({
   fullName: z.string().min(2, 'Name is required').max(100),
@@ -46,6 +47,7 @@ type EventFormData = z.infer<typeof eventFormSchema>;
 const EventBookingForm: React.FC = () => {
   const { t } = useLanguage();
   const [date, setDate] = React.useState<Date>();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventFormSchema),
@@ -66,6 +68,7 @@ const EventBookingForm: React.FC = () => {
 
 const onSubmit = async (data: EventFormData) => {
   try {
+    setIsSubmitting(true);
     const res = await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -84,6 +87,7 @@ const onSubmit = async (data: EventFormData) => {
   } catch (error) {
    toast.success("error in creating a booking");
   }
+  setIsSubmitting(false);
 };
 
   const CheckboxGroup = ({ 
@@ -117,6 +121,36 @@ const onSubmit = async (data: EventFormData) => {
       ))}
     </div>
   );
+
+  const CheckboxGroup1 =  ({
+  name,
+  options,
+  icon: Icon,
+}: {
+  name: keyof EventFormData;
+  options: { value: string; label: string }[];
+  icon?: React.ElementType;
+}) => (
+  <div className="flex flex-wrap gap-3">
+    {options.map((option) => (
+      <label
+        key={option.value}
+        className="flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-background hover:bg-secondary/50 cursor-pointer transition-colors
+        has-[:checked]:bg-primary/10 has-[:checked]:border-primary"
+      >
+        <Checkbox
+          checked={form.watch(name) === option.value}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              form.setValue(name, option.value as any);
+            }
+          }}
+        />
+        <span className="text-sm">{option.label}</span>
+      </label>
+    ))}
+  </div>
+);
 
   return (
     <section id="event-booking" className="py-20 relative overflow-hidden">
@@ -269,7 +303,7 @@ const onSubmit = async (data: EventFormData) => {
                   <h3 className="text-xl font-semibold">{t.eventForm.catering}</h3>
                 </div>
                 <Label className="text-muted-foreground">{t.eventForm.cateringStyle}</Label>
-                <CheckboxGroup
+                <CheckboxGroup1
                   name="cateringStyle"
                   options={[
                     { value: 'traditional', label: t.eventForm.traditional },
@@ -338,7 +372,7 @@ const onSubmit = async (data: EventFormData) => {
                   <Palette className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.decoration}</h3>
                 </div>
-                <CheckboxGroup
+                <CheckboxGroup1
                   name="decoration"
                   options={[
                     { value: 'flowers', label: t.eventForm.flowerTheme },
@@ -404,7 +438,7 @@ const onSubmit = async (data: EventFormData) => {
                   <FileText className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.invitations}</h3>
                 </div>
-                <CheckboxGroup
+                <CheckboxGroup1
                   name="invitations"
                   options={[
                     { value: 'simple', label: t.eventForm.simple },
@@ -420,7 +454,7 @@ const onSubmit = async (data: EventFormData) => {
                   <Plane className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.honeymoon}</h3>
                 </div>
-                <CheckboxGroup
+                <CheckboxGroup1
                   name="honeymoon"
                   options={[
                     { value: 'inCountry', label: t.eventForm.inAlgeria },
@@ -435,7 +469,7 @@ const onSubmit = async (data: EventFormData) => {
                   <Moon className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.weddingNight}</h3>
                 </div>
-                <CheckboxGroup
+                <CheckboxGroup1
                   name="weddingNight"
                   options={[
                     { value: 'hotel', label: t.eventForm.hotel },
@@ -450,7 +484,7 @@ const onSubmit = async (data: EventFormData) => {
                   <Luggage className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.trouse_de_marie}</h3>
                 </div>
-                <CheckboxGroup
+                <CheckboxGroup1
                   name="trouse_de_marie"
                   options={[
                     { value: 'modern', label: t.eventForm.modern },
@@ -464,6 +498,7 @@ const onSubmit = async (data: EventFormData) => {
               <Button 
                 type="submit" 
                 size="lg" 
+                disabled={isSubmitting}
                 className="w-full btn-primary text-lg py-6 rounded-xl"
               >
                 {t.eventForm.submit}

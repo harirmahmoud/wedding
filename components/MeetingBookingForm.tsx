@@ -3,7 +3,7 @@ import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContex';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { set, z } from 'zod';
 import { format } from 'date-fns';
 import { CalendarIcon, User, Phone, Mail, Users, UtensilsCrossed, Camera, FileText, MapPin, House, Car } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -41,7 +41,7 @@ type MeetingFormData = z.infer<typeof meetingFormSchema>;
 const MeetingBookingForm: React.FC = () => {
   const { t } = useLanguage();
   const [date, setDate] = React.useState<Date>();
-
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const form = useForm<MeetingFormData>({
     resolver: zodResolver(meetingFormSchema),
     defaultValues: {
@@ -56,6 +56,7 @@ const onSubmit = async (data: MeetingFormData) => {
     return;
   }
   try {
+    setIsSubmitting(true);
     const res = await fetch("/api/meetings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -74,6 +75,7 @@ const onSubmit = async (data: MeetingFormData) => {
   } catch (error) {
     toast.error("Failed to create meeting");
   }
+  setIsSubmitting(false);
 };
 
 
@@ -100,6 +102,36 @@ const onSubmit = async (data: MeetingFormData) => {
                    form.setValue(name, [...current, option.value] as any);
                  } else {
                    form.setValue(name, current.filter((v) => v !== option.value) as any);
+                 }
+               }}
+             />
+             <span className="text-sm">{option.label}</span>
+           </label>
+         ))}
+       </div>
+     );
+
+       const CheckboxGroup1 =  ({
+       name,
+       options,
+       icon: Icon,
+     }: {
+       name: keyof MeetingFormData;
+       options: { value: string; label: string }[];
+       icon?: React.ElementType;
+     }) => (
+       <div className="flex flex-wrap gap-3">
+         {options.map((option) => (
+           <label
+             key={option.value}
+             className="flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-background hover:bg-secondary/50 cursor-pointer transition-colors
+             has-[:checked]:bg-primary/10 has-[:checked]:border-primary"
+           >
+             <Checkbox
+               checked={form.watch(name) === option.value}
+               onCheckedChange={(checked) => {
+                 if (checked) {
+                   form.setValue(name, option.value as any);
                  }
                }}
              />
@@ -237,7 +269,7 @@ const onSubmit = async (data: MeetingFormData) => {
                   <h3 className="text-xl font-semibold">{t.meetingForm.catering}</h3>
                 </div>
                 <div className="space-y-2">
-                   <CheckboxGroup
+                   <CheckboxGroup1
                   name="restaurant"
                   options={[
                    
@@ -254,7 +286,7 @@ const onSubmit = async (data: MeetingFormData) => {
                   <MapPin className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.meetingForm.venue}</h3>
                 </div>
-                <CheckboxGroup
+                <CheckboxGroup1
                   name="venues"
                   options={[
                    
@@ -318,7 +350,7 @@ const onSubmit = async (data: MeetingFormData) => {
                                 <House className="w-5 h-5 text-primary" />
                                 <h3 className="text-xl font-semibold">{t.eventForm.overnightStaying}</h3>
                               </div>
-                              <CheckboxGroup
+                              <CheckboxGroup1
                                 name="overnightStaying"
                                 options={[
                                   { value: 'with', label: t.eventForm.overnightStay.with },
@@ -349,6 +381,7 @@ const onSubmit = async (data: MeetingFormData) => {
               <Button
                 type="submit"
                 size="lg"
+                disabled={isSubmitting}
                 className="w-full bg-primary hover:bg-primary/90 text-white text-lg py-6 rounded-xl transition-all duration-300"
               >
                 {t.meetingForm.submit}
