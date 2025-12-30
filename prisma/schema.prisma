@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+  engineType = "library" 
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+
+  name      String?
+  password  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Meeting {
+  id             Int      @id @default(autoincrement())
+  fullName       String
+  phone          String
+  email          String
+  eventDate      DateTime
+  attendeesCount Int
+  badges         Boolean  @default(false)
+
+  options        MeetingOption[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model MeetingOption {
+  id        Int        @id @default(autoincrement())
+  type      OptionType
+  value     String
+
+  meetingId Int
+  meeting   Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+}
+
+enum OptionType {
+  PHOTOGRAPHY
+  VENUE
+  RESTAURANT
+  OVERNIGHT_STAYING
+  TRANSPORT
+}
+
+model Event {
+  id              Int      @id @default(autoincrement())
+  fullName        String
+  phone           String
+  email           String
+  eventDate       DateTime
+  adultsCount     Int
+  childrenCount   Int?
+
+  options         EventOption[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model EventOption {
+  id      Int            @id @default(autoincrement())
+  type    EventOptionType
+  value   String
+
+  eventId Int
+  event   Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+enum EventOptionType {
+  VENUES
+  CATERING_STYLE
+  ENTERTAINMENT
+  DECORATION
+  PHOTOGRAPHY
+  BEAUTY
+  TRANSPORT
+  INVITATIONS
+  CLOTHING_RENTAL
+  HONEYMOON
+  WEDDING_NIGHT
+  OVERNIGHT_STAYING
+  TROUSE_DE_MARIE
+}
+
+

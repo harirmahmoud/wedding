@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef } from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -57,4 +58,4 @@ const Home= () => {
   );
 };
 
-export default Index;
+export default Home;
