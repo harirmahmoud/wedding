@@ -76,7 +76,23 @@ const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
               </SheetTrigger>
               <SheetContent side="right" className="w-72">
                 <div className="flex flex-col gap-6 mt-8">
-                  <Logo />
+                  <div className='flex gap-4'>
+              <Image
+                      src="/logo2.jpeg"
+                      alt="Yasmine Events Logo"
+                      width={50}
+                      height={50}
+                      
+                    />
+                    <div className="flex flex-col">
+          <span className="text-xl md:text-2xl font-bold text-foreground tracking-wide">
+            YASMINE EVENTS
+          </span>
+          <span className="text-xs md:text-sm text-muted-foreground italic">
+            La beauté de chaque moment
+          </span>
+        </div>
+          </div>
                   <nav className="flex flex-col gap-4">
                     {navItems.map((item) => (
                       <button

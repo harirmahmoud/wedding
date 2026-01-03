@@ -218,7 +218,7 @@ export const translations = {
         description: 'قاعة الحفلات، حديقة مفتوحة، أمام المسبح، على شاطئ البحر، على يخت',
       },
       catering: {
-        title: 'المطاعم',
+        title: 'اطعام',
         description: 'مأدبات تقليدية وحديثة، كعك مخصص، خيارات صحية',
       },
       decoration: {
@@ -247,10 +247,10 @@ export const translations = {
       },
       Honeymoon:{
         title: 'شهر العسل',
-        description: 'في الجزائر وفي الخارج، ليلة الزفاف في فندق، فيلا أو جناح',
+        description: 'في الجزائر وفي الخارج ',
       },
       nuit_de_noce:{
-        title: 'شهر العسل',
+        title: 'قضاء ليلة الزفاف',
         description:"  ليلة الزفاف في فندق، فيلا أو جناح",
       },
       location_de_vetement:{
@@ -258,7 +258,7 @@ export const translations = {
         description: 'فستان الزفاف، اللباس التقليدي، بدلة',
       },
       trouse_de_marie:{
-        title: 'طقم العريس',
+        title: 'طقم العروسة',
         description: 'تقليدي، حديث',
       },
     },
@@ -282,7 +282,7 @@ export const translations = {
         yacht: 'على يخت',
         birthday: 'لعيد ميلاد',
       },
-      catering: 'المطاعم',
+      catering: 'اطعام',
       cateringStyle: 'نمط الطعام',
       traditional: 'تقليدي',
       modern: 'حديث',
