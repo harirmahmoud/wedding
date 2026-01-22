@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'react-toastify';
 import mosaicBg3 from '@/assets/mosaic-bg-3.jpeg';
+import { RadioGroupField } from './RadioGroupFields';
 
 
 const meetingFormSchema = z.object({
@@ -27,9 +28,9 @@ const meetingFormSchema = z.object({
  
   badges: z.boolean().optional(),
   photography: z.array(z.string()).optional(),
-  venues: z.array(z.string()).optional(),
-  restaurant: z.array(z.string()).optional(),
-  overnightStaying: z.array(z.string()).optional(),
+  venues: z.string().optional(),
+  restaurant: z.string().optional(),
+  overnightStaying: z.string().optional(),
   transport: z.array(z.string()).optional(),
 });
 
@@ -269,7 +270,8 @@ const onSubmit = async (data: MeetingFormData) => {
                   <h3 className="text-xl font-semibold">{t.meetingForm.catering}</h3>
                 </div>
                 <div className="space-y-2">
-                   <CheckboxGroup1
+                   <RadioGroupField
+                                     form={form}
                   name="restaurant"
                   options={[
                    
@@ -286,7 +288,8 @@ const onSubmit = async (data: MeetingFormData) => {
                   <MapPin className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.meetingForm.venue}</h3>
                 </div>
-                <CheckboxGroup1
+                <RadioGroupField
+                                  form={form}
                   name="venues"
                   options={[
                    
@@ -350,7 +353,8 @@ const onSubmit = async (data: MeetingFormData) => {
                                 <House className="w-5 h-5 text-primary" />
                                 <h3 className="text-xl font-semibold">{t.eventForm.overnightStaying}</h3>
                               </div>
-                              <CheckboxGroup1
+                              <RadioGroupField
+                                                form={form}
                                 name="overnightStaying"
                                 options={[
                                   { value: 'with', label: t.eventForm.overnightStay.with },

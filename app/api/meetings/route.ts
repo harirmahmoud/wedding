@@ -44,26 +44,12 @@ export async function POST(req: Request) {
 
     if (meetingError) throw meetingError;
 
-    // 2️⃣ Build options
+    // 2️⃣ Build options array
     const options = [
+      // Multi-choice
       ...(data.photography ?? []).map((value: string) => ({
         meeting_id: meeting.id,
         type: MeetingOptionType.PHOTOGRAPHY,
-        value,
-      })),
-      ...(data.venues ?? []).map((value: string) => ({
-        meeting_id: meeting.id,
-        type: MeetingOptionType.VENUE,
-        value,
-      })),
-      ...(data.restaurant ?? []).map((value: string) => ({
-        meeting_id: meeting.id,
-        type: MeetingOptionType.RESTAURANT,
-        value,
-      })),
-      ...(data.overnightStaying ?? []).map((value: string) => ({
-        meeting_id: meeting.id,
-        type: MeetingOptionType.OVERNIGHT_STAYING,
         value,
       })),
       ...(data.transport ?? []).map((value: string) => ({
@@ -71,9 +57,28 @@ export async function POST(req: Request) {
         type: MeetingOptionType.TRANSPORT,
         value,
       })),
+
+      // Single-choice wrapped in array
+      ...(data.venues ? [data.venues] : []).map((value: string) => ({
+        meeting_id: meeting.id,
+        type: MeetingOptionType.VENUE,
+        value,
+      })),
+      ...(data.restaurant ? [data.restaurant] : []).map((value: string) => ({
+        meeting_id: meeting.id,
+        type: MeetingOptionType.RESTAURANT,
+        value,
+      })),
+      ...(data.overnightStaying ? [data.overnightStaying] : []).map(
+        (value: string) => ({
+          meeting_id: meeting.id,
+          type: MeetingOptionType.OVERNIGHT_STAYING,
+          value,
+        })
+      ),
     ];
 
-    // 3️⃣ Insert options
+    // 3️⃣ Insert options into table
     if (options.length > 0) {
       const { error: optionsError } = await supabase
         .from("meeting_options")
@@ -82,10 +87,7 @@ export async function POST(req: Request) {
       if (optionsError) throw optionsError;
     }
 
-    return NextResponse.json(
-      { success: true, meeting },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, meeting }, { status: 201 });
 
   } catch (error: any) {
     console.error(error);
