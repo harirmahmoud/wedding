@@ -18,7 +18,7 @@ import mosaicBg4 from '@/assets/mosaic-bg-4.jpeg';
 import { GiAmpleDress } from "react-icons/gi";
 import { is, se } from 'date-fns/locale';
 import { RadioGroupField } from './RadioGroupFields';
-import { senderEmail, sendTestEmail } from '@/lib/resend';
+
 
 const eventFormSchema = z.object({
   fullName: z.string().min(2, 'Name is required').max(100),
@@ -68,11 +68,19 @@ const EventBookingForm: React.FC = () => {
     },
   });
 
+const formatList = (list?: (string | undefined)[]) =>
+  list && list.length ? list.filter(Boolean).join(", ") : "Not specified";
+
 const onSubmit = async (data: EventFormData) => {
-  console.log("Submitting data:", data);
   try {
     setIsSubmitting(true);
-    const res = await fetch("/api/events", {
+
+    const eventDate = data.eventDate
+      ? data.eventDate.toLocaleDateString("fr-FR")
+      : "Not specified";
+
+    // Create event
+    const res1 = await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -81,17 +89,68 @@ const onSubmit = async (data: EventFormData) => {
       }),
     });
 
-    if (!res.ok) throw new Error("Failed to create event");
+    if (!res1.ok) throw new Error("Failed to create event");
+
+    // 📧 Email body (TEXT)
+    const emailText = `
+📅 NEW EVENT RESERVATION
+
+👤 Client Information
+-------------------
+Full Name: ${data.fullName}
+Email: ${data.email}
+Phone: ${data.phone}
+
+🗓 Event Details
+-------------------
+Event Date: ${eventDate}
+Adults Count: ${data.adultsCount}
+Children Count: ${data.childrenCount || "0"}
+
+📍 Venue & Services
+-------------------
+Venues: ${formatList(data.venues)}
+Catering Style: ${data.cateringStyle || "Not specified"}
+Decoration: ${data.decoration || "Not specified"}
+Invitations: ${data.invitations || "Not specified"}
+
+🎶 Entertainment
+-------------------
+Entertainment: ${formatList(data.entertainment)}
+Photography: ${formatList(data.photography)}
+Beauty Services: ${formatList(data.beauty)}
+Transport: ${formatList(data.transport)}
+Clothing Rental: ${formatList(data.clothingRental)}
+
+💍 Wedding Options
+-------------------
+Honeymoon: ${data.honeymoon || "Not specified"}
+Wedding Night: ${data.weddingNight || "Not specified"}
+Overnight Staying: ${data.overnightStaying || "Not specified"}
+Trousseau de Marie: ${data.trouse_de_marie || "Not specified"}
+`;
+
+    // Send email
+    const res = await fetch("/api/sendEmail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject: "Réservation de Meeting",
+        text: emailText,
+      }),
+    });
+
+    if (!res.ok) throw new Error("Failed to send email");
 
     toast.success("Event booked successfully!");
-
     form.reset();
     setDate(undefined);
-    console.log("Form reset after submission");
+
   } catch (error) {
-   toast.success("error in creating a booking");
+    toast.error("Error in creating a booking");
+  } finally {
+    setIsSubmitting(false);
   }
-  setIsSubmitting(false);
 };
 
   const CheckboxGroup = ({ 
