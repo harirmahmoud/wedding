@@ -105,13 +105,13 @@ Transport: ${formatList(data.transport)}
         subject: "Réservation de Meeting",
         text: emailText,
       }),
-    });
+    })
 
     if (!res.ok) throw new Error("Failed to send email");
 
     toast.success("Meeting booked successfully!");
     form.reset();
-    setDate(undefined);
+    setDate(undefined)
 
   } catch (error) {
     toast.error("Error in creating a meeting booking");
