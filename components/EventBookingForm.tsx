@@ -17,6 +17,8 @@ import { toast } from 'react-toastify';
 import mosaicBg4 from '@/assets/mosaic-bg-4.jpeg';
 import { GiAmpleDress } from "react-icons/gi";
 import { is, se } from 'date-fns/locale';
+import { RadioGroupField } from './RadioGroupFields';
+
 
 const eventFormSchema = z.object({
   fullName: z.string().min(2, 'Name is required').max(100),
@@ -28,18 +30,18 @@ const eventFormSchema = z.object({
   adultsCount: z.string().min(1),
   childrenCount: z.string().optional(),
   venues: z.array(z.string()).optional(),
-  cateringStyle: z.array(z.string()).optional(),
-  entertainment: z.array(z.string()).optional(),
-  decoration: z.array(z.string()).optional(),
-  photography: z.array(z.string()).optional(),
-  beauty: z.array(z.string()).optional(),
-  transport: z.array(z.string()).optional(),
-  invitations: z.array(z.string()).optional(),
-  clothingRental: z.array(z.string()).optional(),
-  honeymoon: z.array(z.string()).optional(),
-  weddingNight: z.array(z.string()).optional(),
-  overnightStaying: z.array(z.string()).optional(),
-  trouse_de_marie: z.array(z.string()).optional(),
+  cateringStyle: z.string().optional(),
+  entertainment: z.array(z.string().optional()),
+  decoration: z.string().optional(),
+  photography: z.array(z.string().optional()),
+  beauty: z.array(z.string().optional()),
+  transport: z.array(z.string().optional()),
+  invitations: z.string().optional(),
+  clothingRental: z.array(z.string().optional()),
+  honeymoon: z.string().optional(),
+  weddingNight: z.string().optional(),
+  overnightStaying: z.string().optional(),
+  trouse_de_marie: z.string().optional(),
 });
 
 type EventFormData = z.infer<typeof eventFormSchema>;
@@ -53,23 +55,32 @@ const EventBookingForm: React.FC = () => {
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
       venues: [],
-      cateringStyle: [],
+      
       entertainment: [],
-      decoration: [],
+     
       photography: [],
       beauty: [],
       transport: [],
-      invitations: [],
+      
       clothingRental: [],
-      honeymoon: [],
-      weddingNight: [],
+      
+     
     },
   });
+
+const formatList = (list?: (string | undefined)[]) =>
+  list && list.length ? list.filter(Boolean).join(", ") : "Not specified";
 
 const onSubmit = async (data: EventFormData) => {
   try {
     setIsSubmitting(true);
-    const res = await fetch("/api/events", {
+
+    const eventDate = data.eventDate
+      ? data.eventDate.toLocaleDateString("fr-FR")
+      : "Not specified";
+
+    // Create event
+    const res1 = await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -78,16 +89,68 @@ const onSubmit = async (data: EventFormData) => {
       }),
     });
 
-    if (!res.ok) throw new Error("Failed to create event");
+    if (!res1.ok) throw new Error("Failed to create event");
+
+    // 📧 Email body (TEXT)
+    const emailText = `
+📅 NEW EVENT RESERVATION
+
+👤 Client Information
+-------------------
+Full Name: ${data.fullName}
+Email: ${data.email}
+Phone: ${data.phone}
+
+🗓 Event Details
+-------------------
+Event Date: ${eventDate}
+Adults Count: ${data.adultsCount}
+Children Count: ${data.childrenCount || "0"}
+
+📍 Venue & Services
+-------------------
+Venues: ${formatList(data.venues)}
+Catering Style: ${data.cateringStyle || "Not specified"}
+Decoration: ${data.decoration || "Not specified"}
+Invitations: ${data.invitations || "Not specified"}
+
+🎶 Entertainment
+-------------------
+Entertainment: ${formatList(data.entertainment)}
+Photography: ${formatList(data.photography)}
+Beauty Services: ${formatList(data.beauty)}
+Transport: ${formatList(data.transport)}
+Clothing Rental: ${formatList(data.clothingRental)}
+
+💍 Wedding Options
+-------------------
+Honeymoon: ${data.honeymoon || "Not specified"}
+Wedding Night: ${data.weddingNight || "Not specified"}
+Overnight Staying: ${data.overnightStaying || "Not specified"}
+Trousseau de Marie: ${data.trouse_de_marie || "Not specified"}
+`;
+
+    // Send email
+    const res = await fetch("/api/sendEmail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject: "Réservation de Meeting",
+        text: emailText,
+      }),
+    });
+
+    if (!res.ok) throw new Error("Failed to send email");
 
     toast.success("Event booked successfully!");
-
     form.reset();
     setDate(undefined);
+
   } catch (error) {
-   toast.success("error in creating a booking");
+    toast.error("Error in creating a booking");
+  } finally {
+    setIsSubmitting(false);
   }
-  setIsSubmitting(false);
 };
 
   const CheckboxGroup = ({ 
@@ -303,7 +366,8 @@ const onSubmit = async (data: EventFormData) => {
                   <h3 className="text-xl font-semibold">{t.eventForm.catering}</h3>
                 </div>
                 <Label className="text-muted-foreground">{t.eventForm.cateringStyle}</Label>
-                <CheckboxGroup1
+                <RadioGroupField
+                  form={form}
                   name="cateringStyle"
                   options={[
                     { value: 'traditional', label: t.eventForm.traditional },
@@ -372,7 +436,8 @@ const onSubmit = async (data: EventFormData) => {
                   <Palette className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.decoration}</h3>
                 </div>
-                <CheckboxGroup1
+                <RadioGroupField
+                  form={form}
                   name="decoration"
                   options={[
                     { value: 'flowers', label: t.eventForm.flowerTheme },
@@ -438,7 +503,8 @@ const onSubmit = async (data: EventFormData) => {
                   <FileText className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.invitations}</h3>
                 </div>
-                <CheckboxGroup1
+                <RadioGroupField
+                  form={form}
                   name="invitations"
                   options={[
                     { value: 'simple', label: t.eventForm.simple },
@@ -454,7 +520,8 @@ const onSubmit = async (data: EventFormData) => {
                   <Plane className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.honeymoon}</h3>
                 </div>
-                <CheckboxGroup1
+                <RadioGroupField
+                  form={form}
                   name="honeymoon"
                   options={[
                     { value: 'inCountry', label: t.eventForm.inAlgeria },
@@ -469,7 +536,8 @@ const onSubmit = async (data: EventFormData) => {
                   <Moon className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.weddingNight}</h3>
                 </div>
-                <CheckboxGroup1
+                <RadioGroupField
+                  form={form}
                   name="weddingNight"
                   options={[
                     { value: 'hotel', label: t.eventForm.hotel },
@@ -484,7 +552,8 @@ const onSubmit = async (data: EventFormData) => {
                   <Luggage className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.eventForm.trouse_de_marie}</h3>
                 </div>
-                <CheckboxGroup1
+                <RadioGroupField
+                  form={form}
                   name="trouse_de_marie"
                   options={[
                     { value: 'modern', label: t.eventForm.modern },
@@ -500,13 +569,16 @@ const onSubmit = async (data: EventFormData) => {
                 size="lg" 
                 disabled={isSubmitting}
                 className="w-full btn-primary text-lg py-6 rounded-xl"
+                onClick={form.handleSubmit(onSubmit)}
               >
                 {t.eventForm.submit}
               </Button>
+               
             </form>
           </CardContent>
         </Card>
       </div>
+    
     </section>
   );
 };

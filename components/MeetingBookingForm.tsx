@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'react-toastify';
 import mosaicBg3 from '@/assets/mosaic-bg-3.jpeg';
+import { RadioGroupField } from './RadioGroupFields';
 
 
 const meetingFormSchema = z.object({
@@ -27,9 +28,9 @@ const meetingFormSchema = z.object({
  
   badges: z.boolean().optional(),
   photography: z.array(z.string()).optional(),
-  venues: z.array(z.string()).optional(),
-  restaurant: z.array(z.string()).optional(),
-  overnightStaying: z.array(z.string()).optional(),
+  venues: z.string().optional(),
+  restaurant: z.string().optional(),
+  overnightStaying: z.string().optional(),
   transport: z.array(z.string()).optional(),
 });
 
@@ -50,33 +51,75 @@ const MeetingBookingForm: React.FC = () => {
     },
   });
 
+const formatList = (list?: string[]) =>
+  list && list.length ? list.join(", ") : "Not specified";
+
 const onSubmit = async (data: MeetingFormData) => {
-  if(!data.eventDate) {
-    toast.error("Event date is required");
-    return;
-  }
   try {
     setIsSubmitting(true);
-    const res = await fetch("/api/meetings", {
+
+    const meetingDate = data.eventDate.toLocaleDateString("fr-FR");
+
+    // Create meeting
+    const res1 = await fetch("/api/meetings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        ...data, 
-        eventDate: data.eventDate?.toISOString() 
+      body: JSON.stringify({
+        ...data,
+        eventDate: data.eventDate.toISOString(),
       }),
     });
 
-    if (!res.ok) throw new Error("Failed to create meeting");
+    if (!res1.ok) throw new Error("Failed to create meeting");
 
-    console.log("Meeting created successfully");
-    toast.success(t.common.bookingSuccess as string);
+    // 📧 Email body
+    const emailText = `
+📅 NEW MEETING RESERVATION
+
+👤 Organizer Information
+------------------------
+Full Name: ${data.fullName}
+Email: ${data.email}
+Phone: ${data.phone}
+
+🗓 Meeting Details
+------------------------
+Meeting Date: ${meetingDate}
+Number of Attendees: ${data.attendeesCount}
+
+🏷 Services & Options
+------------------------
+Badges Required: ${data.badges ? "Yes" : "No"}
+Photography: ${formatList(data.photography)}
+Venue: ${data.venues || "Not specified"}
+Restaurant: ${data.restaurant || "Not specified"}
+Overnight Staying: ${data.overnightStaying || "Not specified"}
+Transport: ${formatList(data.transport)}
+`;
+
+    // Send email
+    const res = await fetch("/api/sendEmail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject: "Réservation de Meeting",
+        text: emailText,
+      }),
+    });
+
+    if (!res.ok) throw new Error("Failed to send email");
+
+    toast.success("Meeting booked successfully!");
     form.reset();
     setDate(undefined);
+
   } catch (error) {
-    toast.error("Failed to create meeting");
+    toast.error("Error in creating a meeting booking");
+  } finally {
+    setIsSubmitting(false);
   }
-  setIsSubmitting(false);
 };
+
 
 
      const CheckboxGroup = ({ 
@@ -269,7 +312,8 @@ const onSubmit = async (data: MeetingFormData) => {
                   <h3 className="text-xl font-semibold">{t.meetingForm.catering}</h3>
                 </div>
                 <div className="space-y-2">
-                   <CheckboxGroup1
+                   <RadioGroupField
+                                     form={form}
                   name="restaurant"
                   options={[
                    
@@ -286,7 +330,8 @@ const onSubmit = async (data: MeetingFormData) => {
                   <MapPin className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-semibold">{t.meetingForm.venue}</h3>
                 </div>
-                <CheckboxGroup1
+                <RadioGroupField
+                                  form={form}
                   name="venues"
                   options={[
                    
@@ -350,7 +395,8 @@ const onSubmit = async (data: MeetingFormData) => {
                                 <House className="w-5 h-5 text-primary" />
                                 <h3 className="text-xl font-semibold">{t.eventForm.overnightStaying}</h3>
                               </div>
-                              <CheckboxGroup1
+                              <RadioGroupField
+                                                form={form}
                                 name="overnightStaying"
                                 options={[
                                   { value: 'with', label: t.eventForm.overnightStay.with },
