@@ -316,7 +316,7 @@ Transport: ${formatList(data.transport)}
                                      form={form}
                   name="restaurant"
                   options={[
-                   { value: '', label: t.nothing },
+                  
                     { value: 'meetingroom', label: t.meetingForm.restaurantOptions.inmeeting },
                     { value: 'amphitheater', label: t.meetingForm.restaurantOptions.emporter },
                    
@@ -334,7 +334,7 @@ Transport: ${formatList(data.transport)}
                                   form={form}
                   name="venues"
                   options={[
-                   { value: '', label: t.nothing },
+                   
                     { value: 'meetingroom', label: t.meetingForm.venueOptions.meetingroom },
                     { value: 'amphitheater', label: t.meetingForm.venueOptions.amphitheater },
                    
@@ -399,7 +399,7 @@ Transport: ${formatList(data.transport)}
                                                 form={form}
                                 name="overnightStaying"
                                 options={[
-                                  { value: '', label: t.nothing },
+                                  
                                   { value: 'with', label: t.eventForm.overnightStay.with },
                                   { value: 'without', label: t.eventForm.overnightStay.without },
                                
@@ -416,7 +416,7 @@ Transport: ${formatList(data.transport)}
                 <CheckboxGroup
                   name="transport"
                   options={[
-                    { value: '', label: t.nothing },
+                   
                     { value: 'car', label: t.eventForm.car },
                   
                     { value: 'minibus', label: t.eventForm.minibus },

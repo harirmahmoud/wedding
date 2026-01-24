@@ -370,7 +370,7 @@ Trousseau de Marie: ${data.trouse_de_marie || "Not specified"}
                   form={form}
                   name="cateringStyle"
                   options={[
-                    { value: '', label: t.nothing },
+                    
                     { value: 'traditional', label: t.eventForm.traditional },
                     { value: 'modern', label: t.eventForm.modern },
                     { value: 'healthy', label: t.eventForm.healthy },
@@ -441,7 +441,7 @@ Trousseau de Marie: ${data.trouse_de_marie || "Not specified"}
                   form={form}
                   name="decoration"
                   options={[
-                    { value: '', label: t.nothing },
+                   
                     { value: 'flowers', label: t.eventForm.flowerTheme },
                     { value: 'royal', label: t.eventForm.royalTheme },
                   ]}
@@ -509,7 +509,7 @@ Trousseau de Marie: ${data.trouse_de_marie || "Not specified"}
                   form={form}
                   name="invitations"
                   options={[
-                    { value: '', label: t.nothing },
+                    
                     { value: 'simple', label: t.eventForm.simple },
                     { value: 'modern', label: t.eventForm.modern },
                    
@@ -527,7 +527,7 @@ Trousseau de Marie: ${data.trouse_de_marie || "Not specified"}
                   form={form}
                   name="honeymoon"
                   options={[
-                    { value: '', label: t.nothing },
+                    
                     { value: 'inCountry', label: t.eventForm.inAlgeria },
                     { value: 'abroad', label: t.eventForm.abroad },
                   ]}
@@ -544,7 +544,7 @@ Trousseau de Marie: ${data.trouse_de_marie || "Not specified"}
                   form={form}
                   name="weddingNight"
                   options={[
-                    { value: '', label: t.nothing },
+                    
                     { value: 'hotel', label: t.eventForm.hotel },
                     { value: 'villa', label: t.eventForm.villa },
                     { value: 'suite', label: t.eventForm.suite },
@@ -561,7 +561,7 @@ Trousseau de Marie: ${data.trouse_de_marie || "Not specified"}
                   form={form}
                   name="trouse_de_marie"
                   options={[
-                    { value: '', label: t.nothing },
+                    
                     { value: 'modern', label: t.eventForm.modern },
                     { value: 'traditional', label: t.eventForm.traditional },
                     
