@@ -111,12 +111,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
           </div>
         </div>
       </div>
-       <button onClick={async ()=>{
-        console.log("Sending test email...");
-       
-        await sendTestEmail();
-        console.log("Test email sent.");
-      }}>click</button>
+      
     </header>
   );
 };

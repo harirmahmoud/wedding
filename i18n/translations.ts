@@ -3,6 +3,7 @@ export type Language = 'fr' | 'ar' | 'en';
 export const translations = {
   fr: {
     // Navigation
+    nothing:"rien",
     nav: {
       home: 'Accueil',
       services: 'Services',
@@ -197,6 +198,7 @@ export const translations = {
     },
   },
   ar: {
+    nothing:"لا شئ",
     nav: {
       home: 'الرئيسية',
       services: 'خدماتنا',
@@ -384,6 +386,7 @@ export const translations = {
     },
   },
   en: {
+    nothing:"nothing",
     nav: {
       home: 'Home',
       services: 'Services',
