@@ -2,9 +2,10 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContex';
 import Logo from './Logo';
-import { Phone, Mail, MapPin, Heart } from 'lucide-react';
+import { Phone, Mail, MapPin, Heart, FacebookIcon } from 'lucide-react';
 import mosaicBg1 from '@/assets/mosaic-bg-1.jpeg';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
@@ -12,7 +13,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="pt-16 pb-8 relative overflow-hidden">
       {/* Background mosaic */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${mosaicBg1})` }}
       />
@@ -23,22 +24,22 @@ const Footer: React.FC = () => {
           {/* Logo & About */}
           <div className="space-y-4">
             <div className='flex gap-4'>
-                          <Image
-                                  src="/logo2.jpeg"
-                                  alt="Yasmine Events Logo"
-                                  width={50}
-                                  height={50}
-                                  
-                                />
-                                <div className="flex flex-col">
-                      <span className="text-xl md:text-2xl font-bold text-foreground tracking-wide">
-                        Yasmine Events
-                      </span>
-                      <span className="text-xs md:text-sm text-muted-foreground italic">
-                        La beauté de chaque moment
-                      </span>
-                    </div>
-                      </div>
+              <Image
+                src="/logo2.jpeg"
+                alt="Yasmine Events Logo"
+                width={50}
+                height={50}
+
+              />
+              <div className="flex flex-col">
+                <span className="text-xl md:text-2xl font-bold text-foreground tracking-wide">
+                  Yasmine Events
+                </span>
+                <span className="text-xs md:text-sm text-muted-foreground italic">
+                  La beauté de chaque moment
+                </span>
+              </div>
+            </div>
             <p className="text-muted-foreground leading-relaxed">
               Yasmine Events - La beauté de chaque moment. Votre partenaire pour des événements inoubliables.
             </p>
@@ -50,12 +51,16 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-5 h-5 text-primary" />
-                <span>+213 XX XX XX XX</span>
+                <span>+213 07 93 39 75 51</span>
               </div>
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Mail className="w-5 h-5 text-primary" />
-                <span>contact@yasmineevents.com</span>
+                <span>eventyasmine@gmail.com</span>
               </div>
+              <Link href={"https://www.facebook.com/profile.php?id=61559346730106"} className="flex items-center gap-3 text-muted-foreground">
+                <FacebookIcon className="w-5 h-5 text-primary" />
+                <span>J'aime Yasmine EVENT</span>
+              </Link>
               <div className="flex items-center gap-3 text-muted-foreground">
                 <MapPin className="w-5 h-5 text-primary" />
                 <span>Algérie</span>
@@ -67,17 +72,17 @@ const Footer: React.FC = () => {
           <div className="flex items-center justify-center md:justify-end">
             <div className="w-32 h-32 relative">
               <svg viewBox="0 0 100 100" className="w-full h-full opacity-20">
-                <polygon 
-                  points="50,5 93.3,27.5 93.3,72.5 50,95 6.7,72.5 6.7,27.5" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <polygon
+                  points="50,5 93.3,27.5 93.3,72.5 50,95 6.7,72.5 6.7,27.5"
+                  fill="none"
+                  stroke="currentColor"
                   strokeWidth="1"
                   className="text-primary"
                 />
-                <polygon 
-                  points="50,20 78,35 78,65 50,80 22,65 22,35" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <polygon
+                  points="50,20 78,35 78,65 50,80 22,65 22,35"
+                  fill="none"
+                  stroke="currentColor"
                   strokeWidth="1"
                   className="text-accent"
                 />
